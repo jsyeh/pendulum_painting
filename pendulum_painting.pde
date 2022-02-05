@@ -4,7 +4,7 @@
 //2022-01-22(六) 謝其叡的訊息:
 //我昨天晚上睡不著在寢室玩手電筒想到的 
 //可能拿個陀螺儀然後拿個繩子吊著做單擺運動
-//TODO: 將軌跡能秀出, 可用 PGraphics 殘留 2D 畫面
+PGraphics canvas;//將軌跡能秀出, 用 PGraphics 殘留 2D 畫面
 PVector p0, p1, p2;
 //float angle=0.1, angle0=0.1, len=200;
 //float dangle=0, v=0;
@@ -18,6 +18,8 @@ void setup(){
   p1 = new PVector(0,0,0);
   p2 = new PVector(0,0,0);
   v = new PVector(0,0,0);
+  canvas = createGraphics(600,600);//將軌跡能秀出, 用 PGraphics 殘留 2D 畫面
+  resetAll();//including canvas reset
 }
 void draw(){
   background(255);
@@ -31,7 +33,7 @@ void draw(){
   if(mousePressed) drawLine(p1, p2); //moving direction (vector) on 2D canvas
   
   //fill(35,46,82);
-  noFill(); box(300,300,8); //2D canvas
+  noFill(); box(600,600,8); //2D canvas
   drawSphere(p0); //a sphere in top (p0)
   if(bAnim){
     float g=0.98;
@@ -49,7 +51,11 @@ void draw(){
     //angle += dangle;
     //println(angle +" "+ dangle +" "+ v);
     p1.add(v);
+    canvas.beginDraw();//將軌跡能秀出, 用 PGraphics 殘留 2D 畫面
+    canvas.ellipse(p1.x+300, p1.y+300, 5,5); 
+    canvas.endDraw();
   }
+  image(canvas, -300,-300);//將軌跡能秀出, 用 PGraphics 殘留 2D 畫面
 }
 void drawLine(PVector p0, PVector p1){
   line(p0.x, p0.y, p0.z,  p1.x, p1.y, p1.z);
@@ -82,14 +88,20 @@ void mouseReleased(){
     v = PVector.sub(p2,p1).div(10);
   }
 }
+void resetAll(){
+  bAnim=false;
+  bInit=true;
+  p2.x=p1.x;
+  p2.y=p1.y;
+  canvas.beginDraw();
+  canvas.background(255,128,128);
+  canvas.endDraw();
+}
 void mousePressed(){
   if(mouseButton==LEFT){//按下時, 設好起始點,準備將要要動畫
     bAnim=false;
   }else if(mouseButton==RIGHT){//reset all
-    bAnim=false;
-    bInit=true;
-    p2.x=p1.x;
-    p2.y=p1.y;
+    resetAll();
   }
 }
 void keyPressed(){//reset all
